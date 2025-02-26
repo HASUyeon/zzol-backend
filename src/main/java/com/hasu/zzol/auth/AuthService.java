@@ -8,7 +8,6 @@ import com.hasu.zzol.member.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AuthService {
     private final MemberRepository memberRepository;
-    private final Environment environment;
 
     @Value("${kakao.rest-api-key}")
     private String restApiKey;
@@ -33,13 +31,15 @@ public class AuthService {
 
     @Transactional
     public KakaoTokenDto getKakaoAccessToken(String code) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
         System.out.println(code);
         System.out.println(restApiKey);
         System.out.println(redirectUri);
         System.out.println(clientSecret);
+
+        // 인가 코드로 카카오 액세스 토큰 요청
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code"); //카카오 공식문서 기준 authorization_code 로 고정
         params.add("client_id", restApiKey); // 카카오 Dev 앱 REST API 키
@@ -49,7 +49,6 @@ public class AuthService {
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
-        // 카카오로부터 Access token 받아오기
         RestTemplate rt = new RestTemplate();
         ResponseEntity<String> accessTokenResponse = rt.exchange(
                 "https://kauth.kakao.com/oauth/token",
@@ -57,9 +56,6 @@ public class AuthService {
                 kakaoTokenRequest,
                 String.class
         );
-
-        System.out.println(accessTokenResponse);
-
 
         // JSON Parsing (-> KakaoTokenDto)
         ObjectMapper objectMapper = new ObjectMapper();
