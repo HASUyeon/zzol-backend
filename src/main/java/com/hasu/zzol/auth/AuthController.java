@@ -18,7 +18,8 @@ public class AuthController {
     public ResponseEntity<KakaoTokenDto> kakaoLogin(HttpServletRequest request) {
         // 프론트에서 전달한 인가 코드로 카카오 accessToken 발급
         String code = request.getParameter("code");
-        KakaoTokenDto kakaoToken = authService.getKakaoAccessToken(code);
+        KakaoTokenDto kakaoToken= authService.getKakaoAccessToken(code);
+        authService.kakaoLogin(kakaoToken.getAccess_token());
         return ResponseEntity.ok(kakaoToken);
     }
 }

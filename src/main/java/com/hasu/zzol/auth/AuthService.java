@@ -70,4 +70,35 @@ public class AuthService {
 
         return kakaoTokenDto;
     }
+
+
+
+
+    @Transactional
+    public void kakaoLogin(String kakaoAccessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + kakaoAccessToken);
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<MultiValueMap<String, String>> kakaoAccountInfoRequest = new HttpEntity<>(headers);
+
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> kakaoAccountInfoResponse = rt.exchange(
+                "https://kapi.kakao.com/v2/user/me", HttpMethod.GET, kakaoAccountInfoRequest, String.class);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        KakaoAccountResponseDto kakaoAccountInfo = null;
+        try {
+            kakaoAccountInfo = objectMapper.readValue(kakaoAccountInfoResponse.getBody(), KakaoAccountResponseDto.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+
+        System.out.println(kakaoAccountInfo.getId()); //카카오 회원 번호
+        System.out.println(kakaoAccountInfo.getKakao_account().getEmail()); // 카카오 대표 이메일
+
+    }
 }
