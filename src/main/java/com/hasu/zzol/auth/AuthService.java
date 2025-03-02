@@ -18,6 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -105,8 +106,22 @@ public class AuthService {
         signInResponse.setKakaoId(kakaoAccountInfo.getId());
         signInResponse.setKakaoAccount(kakaoAccountInfo.getKakao_account());
         Optional<Member> om = memberRepository.findByKakaoId(kakaoAccountInfo.getId());
-        signInResponse.setRegistered(om.isPresent());
+        if (om.isPresent()) {
+            signInResponse.setRegistered(true);
+            signInResponse.setMember(om.get());
+        }
         return ResponseEntity.ok(signInResponse);
 
+    }
+
+    public SignUpResponseDto kakaoSignUp(SignUpRequestDto requestDto) {
+        if (memberRepository.findByKakaoId(requestDto.getKakaoId()).isPresent()) {
+            throw new IllegalArgumentException("이미 등록된 계정입니다.");
+        }
+
+        Member member = Member.builder().nickname(requestDto.getNickname()).kakaoId(requestDto.getKakaoId()).email(requestDto.getEmail()).birthDate(requestDto.getBirthDate()).memberState("정상").createDt(LocalDateTime.now()).build();
+        memberRepository.save(member);
+
+        return new SignUpResponseDto("회원가입 성공");
     }
 }

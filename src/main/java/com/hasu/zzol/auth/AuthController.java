@@ -4,15 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
+
     @GetMapping("/sign-in/kakao")
     @ResponseBody
     public ResponseEntity<SignInResponseDto> kakaoLogin(HttpServletRequest request) {
@@ -20,5 +19,12 @@ public class AuthController {
         String code = request.getParameter("code");
         KakaoTokenDto kakaoToken= authService.getKakaoAccessToken(code);
         return authService.kakaoLogin(kakaoToken.getAccess_token());
+    }
+
+    @PostMapping("/sign-up/kakao")
+    @ResponseBody
+    public ResponseEntity<SignUpResponseDto> kakaoSignUp(@RequestBody SignUpRequestDto requestDto) {
+        return ResponseEntity.ok(authService.kakaoSignUp(requestDto));
+
     }
 }
