@@ -18,7 +18,7 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer memberNo;
 	
-	private String kakaoCredentailId;
+	private Long kakaoId;
 	
 	private String name;
 	

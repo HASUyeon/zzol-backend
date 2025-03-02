@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.hasu.zzol.member.Member;
 import com.hasu.zzol.member.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -75,7 +78,8 @@ public class AuthService {
 
 
     @Transactional
-    public void kakaoLogin(String kakaoAccessToken) {
+    public ResponseEntity<SignInResponseDto> kakaoLogin(String kakaoAccessToken) {
+        // 카카오 액세스 토큰으로 카카오 계정 정보 조회
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + kakaoAccessToken);
         headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -96,9 +100,13 @@ public class AuthService {
             e.printStackTrace();
         }
 
-
-        System.out.println(kakaoAccountInfo.getId()); //카카오 회원 번호
-        System.out.println(kakaoAccountInfo.getKakao_account().getEmail()); // 카카오 대표 이메일
+        // 동일한 카카오 id를 가진 계정이 있는지 조회
+        SignInResponseDto signInResponse = new SignInResponseDto();
+        signInResponse.setKakaoId(kakaoAccountInfo.getId());
+        signInResponse.setKakaoAccount(kakaoAccountInfo.getKakao_account());
+        Optional<Member> om = memberRepository.findByKakaoId(kakaoAccountInfo.getId());
+        signInResponse.setRegistered(om.isPresent());
+        return ResponseEntity.ok(signInResponse);
 
     }
 }

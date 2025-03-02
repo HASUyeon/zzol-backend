@@ -15,11 +15,10 @@ public class AuthController {
     private final AuthService authService;
     @GetMapping("/sign-in/kakao")
     @ResponseBody
-    public ResponseEntity<KakaoTokenDto> kakaoLogin(HttpServletRequest request) {
+    public ResponseEntity<SignInResponseDto> kakaoLogin(HttpServletRequest request) {
         // 프론트에서 전달한 인가 코드로 카카오 accessToken 발급
         String code = request.getParameter("code");
         KakaoTokenDto kakaoToken= authService.getKakaoAccessToken(code);
-        authService.kakaoLogin(kakaoToken.getAccess_token());
-        return ResponseEntity.ok(kakaoToken);
+        return authService.kakaoLogin(kakaoToken.getAccess_token());
     }
 }
