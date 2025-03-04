@@ -8,6 +8,7 @@ import com.hasu.zzol.member.Member;
 import com.hasu.zzol.member.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.id.Assigned;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -114,14 +115,23 @@ public class AuthService {
 
     }
 
-    public SignUpResponseDto kakaoSignUp(SignUpRequestDto requestDto) {
+    public LoginResponse kakaoSignUp(SignUpRequestDto requestDto) {
         if (memberRepository.findByKakaoId(requestDto.getKakaoId()).isPresent()) {
             throw new IllegalArgumentException("이미 등록된 계정입니다.");
+
         }
 
         Member member = Member.builder().nickname(requestDto.getNickname()).kakaoId(requestDto.getKakaoId()).email(requestDto.getEmail()).birthDate(requestDto.getBirthDate()).memberState("정상").createDt(LocalDateTime.now()).build();
         memberRepository.save(member);
 
-        return new SignUpResponseDto("회원가입 성공");
+        Long uid= Long.valueOf(member.getMemberNo());
+        String kakaoEmail = member.getEmail();
+        String nickName =member.getNickname();
+
+        //토큰 생성
+        AuthTokens token=authTokensGenerator.generate(uid.toString());
+        return new LoginResponse(uid,nickName,kakaoEmail,token);
+
+//        return new SignUpResponseDto("회원가입 성공");
     }
 }
