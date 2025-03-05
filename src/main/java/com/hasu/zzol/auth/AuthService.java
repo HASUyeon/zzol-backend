@@ -8,7 +8,6 @@ import com.hasu.zzol.member.Member;
 import com.hasu.zzol.member.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.id.Assigned;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +32,7 @@ public class AuthService {
     private String redirectUri;
     @Value("${kakao.client-secret}")
     private String clientSecret;
+    private final AuthTokensGenerator authTokensGenerator;
 
     @Transactional
     public KakaoTokenDto getKakaoAccessToken(String code) {
@@ -110,6 +110,14 @@ public class AuthService {
         if (om.isPresent()) {
             signInResponse.setRegistered(true);
             signInResponse.setMember(om.get());
+
+
+            //토큰 생성
+            AuthTokens token=authTokensGenerator.generate(kakaoAccountInfo.getId().toString());
+
+            signInResponse.setToken(token);
+
+
         }
         return ResponseEntity.ok(signInResponse);
 

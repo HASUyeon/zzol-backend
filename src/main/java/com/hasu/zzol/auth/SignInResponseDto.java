@@ -11,4 +11,5 @@ public class SignInResponseDto {
     private Long kakaoId;
     private KakaoAccountDto kakaoAccount;
     private Member member; // 회원가입을 한 회원일 때 채워서 줌
+    private AuthTokens token;
 }

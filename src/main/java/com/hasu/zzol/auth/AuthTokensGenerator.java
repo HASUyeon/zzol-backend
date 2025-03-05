@@ -3,6 +3,8 @@ package com.hasu.zzol.auth;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 @RequiredArgsConstructor
 public class AuthTokensGenerator {
