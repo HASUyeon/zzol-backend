@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/sign-up/kakao")
     @ResponseBody
-    public ResponseEntity<LoginResponse> kakaoSignUp(@RequestBody SignUpRequestDto requestDto) {
+    public ResponseEntity<SignInResponseDto> kakaoSignUp(@RequestBody SignUpRequestDto requestDto) {
         return ResponseEntity.ok(authService.kakaoSignUp(requestDto));
 
     }

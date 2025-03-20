@@ -48,7 +48,7 @@ public class AuthService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code"); //카카오 공식문서 기준 authorization_code 로 고정
         params.add("client_id", restApiKey); // 카카오 Dev 앱 REST API 키
-        params.add("redirect_uri",redirectUri); // 카카오 Dev redirect uri
+        params.add("redirect_uri", redirectUri); // 카카오 Dev redirect uri
         params.add("code", code); // 프론트에서 인가 코드 요청시 받은 인가 코드값
         params.add("client_secret", clientSecret); // 카카오 Dev 카카오 로그인 Client Secret
 
@@ -75,8 +75,6 @@ public class AuthService {
 
         return kakaoTokenDto;
     }
-
-
 
 
     @Transactional
@@ -113,7 +111,7 @@ public class AuthService {
 
 
             //토큰 생성
-            AuthTokens token=authTokensGenerator.generate(kakaoAccountInfo.getId().toString());
+            AuthTokens token = authTokensGenerator.generate(kakaoAccountInfo.getId().toString());
 
             signInResponse.setToken(token);
 
@@ -123,7 +121,7 @@ public class AuthService {
 
     }
 
-    public LoginResponse kakaoSignUp(SignUpRequestDto requestDto) {
+    public SignInResponseDto kakaoSignUp(SignUpRequestDto requestDto) {
         if (memberRepository.findByKakaoId(requestDto.getKakaoId()).isPresent()) {
             throw new IllegalArgumentException("이미 등록된 계정입니다.");
 
@@ -132,14 +130,15 @@ public class AuthService {
         Member member = Member.builder().nickname(requestDto.getNickname()).kakaoId(requestDto.getKakaoId()).email(requestDto.getEmail()).birthDate(requestDto.getBirthDate()).memberState("정상").createDt(LocalDateTime.now()).build();
         memberRepository.save(member);
 
-        Long uid= Long.valueOf(member.getMemberNo());
-        String kakaoEmail = member.getEmail();
-        String nickName =member.getNickname();
-
+        Long uid = Long.valueOf(member.getMemberNo());
         //토큰 생성
-        AuthTokens token=authTokensGenerator.generate(uid.toString());
-        return new LoginResponse(uid,nickName,kakaoEmail,token);
+        AuthTokens token = authTokensGenerator.generate(uid.toString());
 
-//        return new SignUpResponseDto("회원가입 성공");
+        SignInResponseDto signInResponse = new SignInResponseDto();
+        signInResponse.setKakaoId(member.getKakaoId());
+        signInResponse.setRegistered(true);
+        signInResponse.setMember(member);
+        signInResponse.setToken(token);
+        return signInResponse;
     }
 }
