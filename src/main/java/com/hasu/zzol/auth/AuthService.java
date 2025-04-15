@@ -111,7 +111,7 @@ public class AuthService {
 
 
             //토큰 생성
-            AuthTokens token = authTokensGenerator.generate(kakaoAccountInfo.getId().toString());
+            AuthTokens token = authTokensGenerator.generate(signInResponse.getMember().getMemberNo().toString());
 
             signInResponse.setToken(token);
 
