@@ -36,11 +36,6 @@ public class AuthService {
 
     @Transactional
     public KakaoTokenDto getKakaoAccessToken(String code) {
-        System.out.println(code);
-        System.out.println(restApiKey);
-        System.out.println(redirectUri);
-        System.out.println(clientSecret);
-
         // 인가 코드로 카카오 액세스 토큰 요청
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
