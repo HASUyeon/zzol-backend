@@ -103,14 +103,9 @@ public class AuthService {
         if (om.isPresent()) {
             signInResponse.setRegistered(true);
             signInResponse.setMember(om.get());
-
-
-            //토큰 생성
+            // 토큰 생성
             AuthTokens token = authTokensGenerator.generate(signInResponse.getMember().getMemberNo().toString());
-
             signInResponse.setToken(token);
-
-
         }
         return ResponseEntity.ok(signInResponse);
 
@@ -125,7 +120,7 @@ public class AuthService {
         memberRepository.save(member);
 
         Long uid = Long.valueOf(member.getMemberNo());
-        //토큰 생성
+        // 토큰 생성
         AuthTokens token = authTokensGenerator.generate(uid.toString());
 
         SignUpResponseDto signUpResponse = new SignUpResponseDto();
