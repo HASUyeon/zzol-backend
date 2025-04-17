@@ -1,15 +1,14 @@
 package com.hasu.zzol.auth;
 
 import com.hasu.zzol.member.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
-@AllArgsConstructor
-@Getter
+@Data
 public class SignUpResponseDto {
-    private String message;
-    private Long kakaoId;
-    private KakaoAccountDto kakaoAccount;
-    private Member member; // 회원가입을 한 회원일 때 채워서 줌
+    @Schema(description = "회원 정보")
+    private Member member;
+
+    @Schema(description = "토큰")
     private AuthTokens token;
 }

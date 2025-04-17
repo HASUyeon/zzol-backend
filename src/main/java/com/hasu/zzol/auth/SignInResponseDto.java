@@ -22,5 +22,7 @@ public class SignInResponseDto {
 
     @Schema(description = "회원 정보")
     private Member member; // 회원가입을 한 회원일 때 채워서 줌
+
+    @Schema(description = "토큰")
     private AuthTokens token;
 }
