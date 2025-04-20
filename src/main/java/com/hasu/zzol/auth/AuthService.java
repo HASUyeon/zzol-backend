@@ -103,37 +103,29 @@ public class AuthService {
         if (om.isPresent()) {
             signInResponse.setRegistered(true);
             signInResponse.setMember(om.get());
-
-
-            //토큰 생성
+            // 토큰 생성
             AuthTokens token = authTokensGenerator.generate(signInResponse.getMember().getMemberNo().toString());
-
             signInResponse.setToken(token);
-
-
         }
         return ResponseEntity.ok(signInResponse);
 
     }
 
-    public SignInResponseDto kakaoSignUp(SignUpRequestDto requestDto) {
+    public SignUpResponseDto kakaoSignUp(SignUpRequestDto requestDto) {
         if (memberRepository.findByKakaoId(requestDto.getKakaoId()).isPresent()) {
             throw new IllegalArgumentException("이미 등록된 계정입니다.");
-
         }
 
         Member member = Member.builder().nickname(requestDto.getNickname()).kakaoId(requestDto.getKakaoId()).email(requestDto.getEmail()).birthDate(requestDto.getBirthDate()).memberState("정상").createDt(LocalDateTime.now()).build();
         memberRepository.save(member);
 
         Long uid = Long.valueOf(member.getMemberNo());
-        //토큰 생성
+        // 토큰 생성
         AuthTokens token = authTokensGenerator.generate(uid.toString());
 
-        SignInResponseDto signInResponse = new SignInResponseDto();
-        signInResponse.setKakaoId(member.getKakaoId());
-        signInResponse.setRegistered(true);
-        signInResponse.setMember(member);
-        signInResponse.setToken(token);
-        return signInResponse;
+        SignUpResponseDto signUpResponse = new SignUpResponseDto();
+        signUpResponse.setMember(member);
+        signUpResponse.setToken(token);
+        return signUpResponse;
     }
 }
