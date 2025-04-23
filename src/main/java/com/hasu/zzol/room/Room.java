@@ -47,7 +47,7 @@ public class Room {
 
     @NotBlank
     @Schema(description = "방 상태")
-    private String roomState;
+    private RoomState roomState;
 
     @NotBlank
     @Schema(description = "방 등록 회원 번호")
