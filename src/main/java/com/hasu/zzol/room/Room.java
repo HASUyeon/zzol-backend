@@ -27,11 +27,11 @@ public class Room {
 
     @NotBlank
     @Schema(description = "게임 모드")
-    private String gameMode;
+    private GameMode gameMode;
 
     @NotBlank
     @Schema(description = "내기 모드")
-    private String betMode;
+    private BetMode betMode;
 
     @NotBlank
     @Schema(description = "현재 인원")
